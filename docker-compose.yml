@@ -1,0 +1,41 @@
+#services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: .devcontainer/Dockerfile
+#    volumes:
+#      - .:/workspace:cached
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      - PORT=${PORT}
+#      - ENV=${ENV}
+#      - PYTHONPATH=/workspace
+#    env_file:
+#      - .env.example  # Cambia a .env en producción
+#    command: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --reload
+#    restart: unless-stopped
+
+  services:
+    app:
+      build:
+        context: .
+        dockerfile: .devcontainer/Dockerfile
+      volumes:
+        - .:/workspace:cached
+      ports:
+        # Usamos la variable de entorno para el puerto del host también
+        - "8000:8000" #"${PORT:-8000}:${PORT:-8000}"
+      environment:
+        - PORT=${PORT:-8000}
+        - ENV=${ENV:-development}
+        - PYTHONPATH=/workspace
+      env_file:
+        # IMPORTANTE: Docker Compose también permite una lista.
+        # Si el .env no existe, usará solo el .env.example sin dar error.
+        - .env.example
+        - .env
+      #command: uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --reload
+      command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      restart: unless-stopped
+    

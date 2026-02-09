@@ -1,0 +1,67 @@
+/*{
+    "name": "Entorno de Desarrollo FastAPI",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "njpwerner.autodocstring",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    },
+    "forwardPorts": [8000],
+    "portsAttributes": {
+    "8000": {
+        "label": "FastAPI App",
+        "onAutoForward": "notify"
+        }
+    },
+    "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && pip install -r requirements.txt",
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ]
+}*/
+{
+    "name": "Entorno de Desarrollo FastAPI",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Esto ayuda a que VS Code encuentre tus clases en archivos separados
+                "python.analysis.extraPaths": ["/workspace"],
+                "python.linting.enabled": true
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "njpwerner.autodocstring",
+                "tamasfe.even-better-toml",
+                "ms-azuretools.vscode-docker" // Muy útil para ver tus contenedores
+            ]
+        }
+    },
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": {
+            "label": "FastAPI App",
+            "onAutoForward": "notify"
+        }
+    },
+    // Añadimos el --user para evitar conflictos de permisos en Linux
+    "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && pip install --user -r requirements.txt",
+    
+    // IMPORTANTE: Si tu Dockerfile de raíz no crea el usuario "vscode", 
+    // comenta esta línea o cámbiala a "root" para evitar errores de inicio.
+    // "remoteUser": "vscode", 
+    
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ]
+}
